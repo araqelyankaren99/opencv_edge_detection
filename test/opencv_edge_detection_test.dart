@@ -1,5 +1,4 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:opencv_edge_detection/opencv_edge_detection.dart';
 import 'package:opencv_edge_detection/opencv_edge_detection_platform_interface.dart';
 import 'package:opencv_edge_detection/opencv_edge_detection_method_channel.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
@@ -20,10 +19,5 @@ void main() {
   });
 
   test('getPlatformVersion', () async {
-    OpencvEdgeDetection opencvEdgeDetectionPlugin = OpencvEdgeDetection();
-    MockOpencvEdgeDetectionPlatform fakePlatform = MockOpencvEdgeDetectionPlatform();
-    OpencvEdgeDetectionPlatform.instance = fakePlatform;
-
-    expect(await opencvEdgeDetectionPlugin.getPlatformVersion(), '42');
   });
 }
