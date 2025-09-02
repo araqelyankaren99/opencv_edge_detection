@@ -104,7 +104,7 @@ class OpencvEdgeDetection {
     return edgeDetectionResult;
   }
 
-  Future<EdgeDetectionResult?> detectDocumentEdgesTest(
+  Future<EdgeDetectionResult?> processImage(
       String inputFilePath,
       String outputFilePath,
       ) async {

@@ -3,9 +3,9 @@ import 'dart:io';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:opencv_edge_detection_example/image_processor.dart';
-import 'package:opencv_edge_detection_example/result_screen.dart';
-import 'package:opencv_edge_detection_example/util.dart';
+import 'package:opencv_edge_detection_example/utils/image_processor.dart';
+import 'package:opencv_edge_detection_example/presentation/result_screen.dart';
+import 'package:opencv_edge_detection_example/utils/util.dart';
 import 'package:path_provider/path_provider.dart';
 
 class CameraProcessingScreen extends StatefulWidget {
@@ -67,9 +67,9 @@ class _CameraProcessingScreenState extends State<CameraProcessingScreen> {
     final outputFilePath = '$_appTempDirectoryPath/temp.jpeg';
 
     try {
-      final edgeDetectionResult = await processImage(
-        cameraImage,
-        outputFilePath,
+      final edgeDetectionResult = await processCameraImage(
+        cameraImage: cameraImage,
+        outputFilePath : outputFilePath,
       );
 
       if (edgeDetectionResult == null) {

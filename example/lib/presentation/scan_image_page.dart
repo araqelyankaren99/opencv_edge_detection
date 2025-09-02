@@ -3,9 +3,9 @@ import 'dart:io';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:opencv_edge_detection/opencv_edge_detection.dart';
-import 'package:opencv_edge_detection_example/result_screen.dart';
-import 'package:opencv_edge_detection_example/util.dart';
+import 'package:opencv_edge_detection_example/utils/image_processor.dart';
+import 'package:opencv_edge_detection_example/presentation/result_screen.dart';
+import 'package:opencv_edge_detection_example/utils/util.dart';
 import 'package:path_provider/path_provider.dart';
 
 class ScanImagePage extends StatefulWidget {
@@ -64,8 +64,7 @@ class _ScanImagePageState extends State<ScanImagePage> {
       imageCache.clear();
 
       final tempFilePath = '$_appTempDirectoryPath/temp.jpeg';
-      final edgeDetectionResult = await OpencvEdgeDetection()
-          .detectDocumentEdgesTest(captureImageFilePath, tempFilePath);
+      final edgeDetectionResult = await processLiveImage(inputPath:  captureImageFilePath,outputPath:  tempFilePath);
       if (edgeDetectionResult == null) {
         return;
       }

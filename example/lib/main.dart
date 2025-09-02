@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:opencv_edge_detection_example/choose_options_screen.dart';
+import 'package:opencv_edge_detection_example/presentation/choose_options_screen.dart';
 
 void main() {
   runApp(const MyApp());

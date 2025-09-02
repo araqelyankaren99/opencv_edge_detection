@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:opencv_edge_detection_example/camera_processing_screen.dart';
-import 'package:opencv_edge_detection_example/scan_image_page.dart';
+import 'package:opencv_edge_detection_example/presentation/camera_processing_screen.dart';
+import 'package:opencv_edge_detection_example/presentation/scan_image_page.dart';
 
 class ChooseOptionsScreen extends StatelessWidget {
   const ChooseOptionsScreen({super.key});
