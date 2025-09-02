@@ -24,8 +24,9 @@ android {
         applicationId = "com.example.opencv_edge_detection_example"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
-        minSdk = flutter.minSdkVersion
-        targetSdk = flutter.targetSdkVersion
+        minSdk = 30
+        targetSdk = 35
+        ndkVersion = "27.0.12077973"
         versionCode = flutter.versionCode
         versionName = flutter.versionName
     }
