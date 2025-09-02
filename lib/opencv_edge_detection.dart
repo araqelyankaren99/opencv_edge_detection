@@ -136,7 +136,7 @@ Future<EdgeDetectionResult> _processImageInStreaming({
 }) async {
   final nativeLib =
   Platform.isAndroid
-      ? DynamicLibrary.open('libnative_opencv.so')
+      ? DynamicLibrary.open('libopencv_edge_detection.so')
       : DynamicLibrary.process();
 
   final detectDocumentStreaming = nativeLib.lookupFunction<
@@ -181,7 +181,7 @@ Future<EdgeDetectionResult> _processImage({
 }) async {
   final nativeLib =
   Platform.isAndroid
-      ? DynamicLibrary.open('libnative_opencv.so')
+      ? DynamicLibrary.open('libopencv_edge_detection.so')
       : DynamicLibrary.process();
 
   final detectDocument = nativeLib
