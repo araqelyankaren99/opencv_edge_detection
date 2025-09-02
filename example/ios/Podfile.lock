@@ -33,7 +33,7 @@ SPEC CHECKSUMS:
   camera_avfoundation: adb0207d868b2d873e895371d88448399ab78d87
   Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
   integration_test: 252f60fa39af5e17c3aa9899d35d908a0721b573
-  opencv_edge_detection: be466fbe1fed41aa826d3d21529e14ff9c015e16
+  opencv_edge_detection: a66db68e1ec0e84db83ab9371b04e83dbf9c7056
   path_provider_foundation: 2b6b4c569c0fb62ec74538f866245ac84301af46
 
 PODFILE CHECKSUM: 73347e008d2110b2353f8777e7fda978816bc556
