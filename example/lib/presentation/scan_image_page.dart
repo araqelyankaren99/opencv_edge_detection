@@ -18,6 +18,7 @@ class ScanImagePage extends StatefulWidget {
 class _ScanImagePageState extends State<ScanImagePage> {
   CameraController? _controller;
   late String _appTempDirectoryPath;
+  bool _isLoading = false;
 
   @override
   void initState() {
@@ -34,7 +35,7 @@ class _ScanImagePageState extends State<ScanImagePage> {
     }
     _controller = CameraController(
       cameras.first,
-      ResolutionPreset.max,
+      ResolutionPreset.ultraHigh,
       enableAudio: false,
     );
     await _controller?.initialize();
@@ -52,8 +53,12 @@ class _ScanImagePageState extends State<ScanImagePage> {
   Future<void> _detectEdgesEx() async {
     if (_controller?.value.isInitialized == true &&
         _controller?.value.isTakingPicture == false) {
+      _isLoading = true;
+      setState(() {});
       final captureImageFile = await _controller?.takePicture();
       if (captureImageFile == null) {
+        _isLoading = false;
+        setState(() {});
         return;
       }
       final captureImageFilePath = captureImageFile.path;
@@ -66,6 +71,8 @@ class _ScanImagePageState extends State<ScanImagePage> {
       final tempFilePath = '$_appTempDirectoryPath/temp.jpeg';
       final edgeDetectionResult = await processLiveImage(inputPath:  captureImageFilePath,outputPath:  tempFilePath);
       if (edgeDetectionResult == null) {
+        _isLoading = false;
+        setState(() {});
         return;
       }
       if (!mounted) {
@@ -85,11 +92,20 @@ class _ScanImagePageState extends State<ScanImagePage> {
   }
 
   Widget _cameraWidget() {
-    if (_controller == null) {
+    if (_controller == null || !_controller!.value.isInitialized) {
       return const SizedBox.shrink();
     }
 
-    return SizedBox.expand(child: Center(child: CameraPreview(_controller!)));
+    return SizedBox.expand(
+      child: FittedBox(
+        fit: BoxFit.cover,
+        child: SizedBox(
+          width: _controller!.value.previewSize!.height,
+          height: _controller!.value.previewSize!.width,
+          child: CameraPreview(_controller!),
+        ),
+      ),
+    );
   }
 
   Widget _loaderWidget() {
@@ -116,9 +132,21 @@ class _ScanImagePageState extends State<ScanImagePage> {
                     alignment: Alignment.bottomCenter,
                     child: Padding(
                       padding: const EdgeInsets.only(bottom: 25),
-                      child: ElevatedButton(
+                      child: _isLoading ?
+                       CircularProgressIndicator():
+                      ElevatedButton(
                         onPressed: _detectEdgesEx,
-                        child: Icon(Icons.camera_alt),
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(vertical: 5),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                            Icon(Icons.camera_alt),
+                            SizedBox(width: 5),
+                            Text('Pick image'),
+                          ],
+                          ),
+                        ),
                       ),
                     ),
                   ),

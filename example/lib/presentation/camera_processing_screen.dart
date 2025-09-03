@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:camera/camera.dart';
@@ -20,6 +21,8 @@ class _CameraProcessingScreenState extends State<CameraProcessingScreen> {
   late String _appTempDirectoryPath;
   bool _isProcessing = false;
   bool _hasNavigated = false;
+  int? _countdown;
+  String _countdownText = '';
 
   @override
   void initState() {
@@ -29,7 +32,8 @@ class _CameraProcessingScreenState extends State<CameraProcessingScreen> {
 
   @override
   void dispose() {
-    if (_cameraController != null && _cameraController!.value.isStreamingImages) {
+    if (_cameraController != null &&
+        _cameraController!.value.isStreamingImages) {
       _cameraController!.stopImageStream();
     }
     _cameraController?.dispose();
@@ -46,16 +50,16 @@ class _CameraProcessingScreenState extends State<CameraProcessingScreen> {
 
     _cameraController = CameraController(
       cameras.first,
-      ResolutionPreset.medium,
+      ResolutionPreset.ultraHigh,
       enableAudio: false,
     );
 
     await _cameraController?.initialize();
-    await _cameraController?.lockCaptureOrientation(DeviceOrientation.portraitUp);
+    await _cameraController?.lockCaptureOrientation(
+      DeviceOrientation.portraitUp,
+    );
     await _cameraController?.setFlashMode(FlashMode.off);
     setState(() {});
-    await Future.delayed(Duration(seconds: 2));
-    _cameraController?.startImageStream(_onImageStream);
   }
 
   Future<void> _onImageStream(CameraImage cameraImage) async {
@@ -69,7 +73,7 @@ class _CameraProcessingScreenState extends State<CameraProcessingScreen> {
     try {
       final edgeDetectionResult = await processCameraImage(
         cameraImage: cameraImage,
-        outputFilePath : outputFilePath,
+        outputFilePath: outputFilePath,
       );
 
       if (edgeDetectionResult == null) {
@@ -81,11 +85,11 @@ class _CameraProcessingScreenState extends State<CameraProcessingScreen> {
       _hasNavigated = true;
       _cameraController?.stopImageStream();
 
-      if(Platform.isAndroid){
-        await rotateImage(File(outputFilePath),angle: 90);
+      if (Platform.isAndroid) {
+        await rotateImage(File(outputFilePath), angle: 90);
       }
 
-      if(!mounted){
+      if (!mounted) {
         return;
       }
 
@@ -95,7 +99,7 @@ class _CameraProcessingScreenState extends State<CameraProcessingScreen> {
         MaterialPageRoute(
           builder: (context) => ResultScreen(croppedFilePath: outputFilePath),
         ),
-            (_) => false,
+        (_) => false,
       );
     } catch (_) {
       await _deleteTempFile();
@@ -109,17 +113,58 @@ class _CameraProcessingScreenState extends State<CameraProcessingScreen> {
     if (await file.exists()) {
       try {
         await file.delete();
-      } catch (_) {
-       }
+      } catch (_) {}
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: _cameraController == null || !_cameraController!.value.isInitialized
-          ? _loaderWidget()
-          : CameraPreview(_cameraController!),
+      body: Stack(
+        children: [
+          _cameraPreviewWidget(),
+          if (_countdown != null)
+            Center(
+              child: Container(
+                padding: const EdgeInsets.all(16),
+                color: Colors.black.withValues(alpha: 0.5),
+                child: Text(
+                  _countdownText,
+                  style: const TextStyle(
+                    fontSize: 32,
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ),
+          Align(
+            alignment: Alignment.bottomLeft,
+            child: Padding(
+              padding: EdgeInsets.only(bottom: 25,left: 15,right: 15),
+              child: Row(
+                children: [
+                  ElevatedButton(
+                    onPressed: _startStreaming,
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(vertical: 5),
+                      child: Text('Start streaming'),
+                    ),
+                  ),
+                  Expanded(child: SizedBox()),
+                  ElevatedButton(
+                    onPressed: _stopStreaming,
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(vertical: 5),
+                      child: Text('Stop streaming'),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -128,6 +173,50 @@ class _CameraProcessingScreenState extends State<CameraProcessingScreen> {
       child: ColoredBox(
         color: Colors.white.withAlpha((0.5 * 255).toInt()),
         child: const Center(child: CircularProgressIndicator()),
+      ),
+    );
+  }
+
+  Future<void> _startStreaming()async {
+    int seconds = 3;
+    setState(() {
+      _countdown = seconds;
+      _countdownText = 'Start streaming $seconds';
+    });
+
+    Timer.periodic(const Duration(seconds: 1), (timer) {
+      seconds--;
+      if (seconds > 0) {
+        setState(() {
+          _countdownText = 'Start streaming $seconds';
+        });
+      } else {
+        timer.cancel();
+        setState(() {
+          _countdown = null;
+        });
+        _cameraController?.startImageStream(_onImageStream);
+      }
+    });
+  }
+
+  void _stopStreaming() {
+    _cameraController?.stopImageStream();
+  }
+
+  Widget _cameraPreviewWidget() {
+    if (_cameraController == null || !_cameraController!.value.isInitialized) {
+      return _loaderWidget();
+    }
+
+    return SizedBox.expand(
+      child: FittedBox(
+        fit: BoxFit.cover,
+        child: SizedBox(
+          width: _cameraController!.value.previewSize!.height,
+          height: _cameraController!.value.previewSize!.width,
+          child: CameraPreview(_cameraController!),
+        ),
       ),
     );
   }
