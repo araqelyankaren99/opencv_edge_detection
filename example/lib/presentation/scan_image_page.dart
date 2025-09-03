@@ -75,10 +75,11 @@ class _ScanImagePageState extends State<ScanImagePage> {
       if (!mounted) {
         return;
       }
-      Navigator.of(context).push(
+      Navigator.of(context).pushAndRemoveUntil(
         MaterialPageRoute(
           builder: (context) => ResultScreen(croppedFilePath: tempFilePath),
         ),
+            (_) => false,
       );
     }
   }
