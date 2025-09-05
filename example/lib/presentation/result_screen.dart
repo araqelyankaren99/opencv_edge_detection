@@ -40,35 +40,35 @@ class _ResultScreenState extends State<ResultScreen> {
           _croppedFilePath == null
               ? const SizedBox.shrink()
               : Padding(
-            padding: const EdgeInsets.all(20),
-            child: Center(
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(widget.borderRadius),
-                child: Stack(
-                  children: [
-                    Image.file(
-                      File(_croppedFilePath!),
-                      fit: BoxFit.contain,
-                      key: ValueKey(_reloadKey),
-                    ),
-                    Positioned.fill(
-                      child: DecoratedBox(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(
-                            widget.borderRadius,
-                          ),
-                          border: Border.all(
-                            color: widget.borderColor,
-                            width: widget.width,
+                padding: const EdgeInsets.all(20),
+                child: Center(
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(widget.borderRadius),
+                    child: Stack(
+                      children: [
+                        Image.file(
+                          File(_croppedFilePath!),
+                          fit: BoxFit.contain,
+                          key: ValueKey(_reloadKey),
+                        ),
+                        Positioned.fill(
+                          child: DecoratedBox(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(
+                                widget.borderRadius,
+                              ),
+                              border: Border.all(
+                                color: widget.borderColor,
+                                width: widget.width,
+                              ),
+                            ),
                           ),
                         ),
-                      ),
+                      ],
                     ),
-                  ],
+                  ),
                 ),
               ),
-            ),
-          ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Row(
@@ -97,41 +97,47 @@ class _ResultScreenState extends State<ResultScreen> {
               ],
             ),
           ),
-          _isLoading ?
-          SizedBox.expand(
-            child: Center(child: CircularProgressIndicator(),
-            ),
-          ) : SizedBox.shrink(),
+          _isLoading
+              ? SizedBox.expand(
+                child: Center(child: CircularProgressIndicator()),
+              )
+              : SizedBox.shrink(),
         ],
       ),
     );
   }
 
   Future<void> _rotate() async {
-    if (_croppedFilePath == null || _isLoading) {
-      return;
+    try {
+      if (_croppedFilePath == null || _isLoading) {
+        return;
+      }
+      _isLoading = true;
+      setState(() {});
+      await rotateImage(File(_croppedFilePath!), angle: 90);
+
+      if (!mounted) {
+        return;
+      }
+
+      imageCache.clear();
+      imageCache.clearLiveImages();
+
+      setState(() {
+        _reloadKey++;
+        _isLoading = false;
+      });
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
     }
-    _isLoading = true;
-    setState(() {});
-    await rotateImage(File(_croppedFilePath!), angle: 90);
-
-    if (!mounted) {
-      return;
-    }
-
-    imageCache.clear();
-    imageCache.clearLiveImages();
-
-    setState(() {
-      _reloadKey++;
-      _isLoading = false;
-    });
   }
 
   void _onTap(BuildContext context) {
     Navigator.of(context).pushAndRemoveUntil(
       MaterialPageRoute(builder: (context) => const ChooseOptionsScreen()),
-          (_) => false,
+      (_) => false,
     );
   }
 }

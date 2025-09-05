@@ -201,7 +201,9 @@ class _CameraProcessingScreenState extends State<CameraProcessingScreen> {
   }
 
   void _stopStreaming() {
-    _cameraController?.stopImageStream();
+    if (_cameraController != null && _cameraController!.value.isStreamingImages) {
+      _cameraController!.stopImageStream();
+    }
   }
 
   Widget _cameraPreviewWidget() {

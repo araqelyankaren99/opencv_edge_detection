@@ -39,9 +39,9 @@ SPEC CHECKSUMS:
   Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
   image_picker_ios: c560581cceedb403a6ff17f2f816d7fea1421fc1
   integration_test: 252f60fa39af5e17c3aa9899d35d908a0721b573
-  opencv_edge_detection: a66db68e1ec0e84db83ab9371b04e83dbf9c7056
+  opencv_edge_detection: 8cb48e2019747aab30da40048ab631949c015d39
   path_provider_foundation: 2b6b4c569c0fb62ec74538f866245ac84301af46
 
-PODFILE CHECKSUM: 73347e008d2110b2353f8777e7fda978816bc556
+PODFILE CHECKSUM: bf50164868671d9bca8bd27be14a158d911924e2
 
 COCOAPODS: 1.16.2
